@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        /* Body Styles */
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Container Styles */
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px; /* Increased width to accommodate character */
+            padding: 30px;
+            animation: fadeInUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .content-left {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 20px;
+        }
+
+        .content-right {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rotateLogo {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .logo-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            perspective: 1000px;
+        }
+
+        .logo {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: rotateLogo 15s infinite linear;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            color: #444;
+            margin-bottom: 10px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            border-radius: 2px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+
+        .form-group input:focus {
+            border-color: #6e8efb;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(110, 142, 251, 0.2);
+            background-color: #fff;
+        }
+
+        /* Button Styles */
+        .btn {
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 5px 20px rgba(110, 142, 251, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(110, 142, 251, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            animation: pulse 0.3s ease;
+        }
+
+        /* Result Styles */
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: #f5f7ff;
+            border-radius: 15px;
+            text-align: center;
+            display: none;
+            animation: fadeInUp 0.5s ease-out;
+            border: 1px solid #e0e0e0;
+        }
+
+        .result h2 {
+            color: #444;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .age-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #6e8efb;
+            margin: 15px 0;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .age-details {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .age-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .age-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .age-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .age-text {
+            flex: 1;
+            color: #555;
+            font-size: 1rem;
+        }
+
+        /* Character Styles */
+        .character-container {
+            width: 100%;
+            max-width: 300px;
+            height: 400px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .character {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: bottom;
+            transition: all 0.5s ease;
+            display: none;
+        }
+
+        /* Error Styles */
+        .error {
+            color: #ff4757;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            display: none;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .content-left, .content-right {
+                padding-right: 0;
+            }
+            .content-right {
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .age-display {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content-left">
+            <div class="header">
+                <div class="logo-container">
+                    <div class="logo">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1864/1864593.png" alt="Age Calculator Logo">
+                    </div>
+                </div>
+                <h1>Age Calculator</h1>
+                <p>Discover your exact age in years, months, days and more!</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="birthdate">Your Birthdate</label>
+                <input type="date" id="birthdate" max="">
+                <div class="error" id="date-error">Please enter a valid date</div>
+            </div>
+            
+            <button class="btn" id="calculate-btn">Calculate My Age</button>
+            
+            <div class="result" id="result">
+                <h2>Your Age Results</h2>
+                <div class="age-display" id="age-display">0 years</div>
+                <div class="age-details">
+                    <div class="age-item">
+                        <div class="age-icon">📅</div>
+                        <div class="age-text" id="years">0 years</div>
+                    </div>
+                    <div class="age-item">
+                        <div class="age-icon">🗓️</div>
+                        <div class="age-text" id="months">0 months</div>
+                    </div>
+                    <div class="age-item">
+                        <div class="age-icon">📆</div>
+                        <div class="age-text" id="days">0 days</div>
+                    </div>
+                    <div class="age-item">
+                        <div class="age-icon">⏰</div>
+                        <div class="age-text" id="hours">0 hours</div>
+                    </div>
+                    <div class="age-item">
+                        <div class="age-icon">🎂</div>
+                        <div class="age-text" id="next-birthday">Next birthday: today!</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <p>Made with ❤️ for Android</p>
+            </div>
+        </div>
+
+        <div class="content-right">
+            <div class="character-container">
+                <!-- Age-based characters will be shown here -->
+                <img src="https://cdn-icons-png.flaticon.com/512/1864/1864514.png" alt="Baby" class="character" id="baby-character" style="height: 200px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/1864/1864526.png" alt="Child" class="character" id="child-character" style="height: 250px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/1864/1864537.png" alt="Teen" class="character" id="teen-character" style="height: 300px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/1864/1864547.png" alt="Adult" class="character" id="adult-character" style="height: 350px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/1864/1864553.png" alt="Elder" class="character" id="elder-character" style="height: 300px;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set max date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('birthdate').setAttribute('max', today);
+            
+            // Calculate button click event
+            const calculateBtn = document.getElementById('calculate-btn');
+            calculateBtn.addEventListener('click', calculateAge);
+            
+            // Also calculate when pressing Enter in date field
+            document.getElementById('birthdate').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    calculateAge();
+                }
+            });
+            
+            // Function to calculate age
+            function calculateAge() {
+                const birthdateInput = document.getElementById('birthdate').value;
+                const errorElement = document.getElementById('date-error');
+                const resultElement = document.getElementById('result');
+                
+                // Validate input
+                if (!birthdateInput) {
+                    showError(errorElement, 'Please enter your birthdate');
+                    resultElement.style.display = 'none';
+                    return;
+                }
+                
+                const birthdate = new Date(birthdateInput);
+                const today = new Date();
+                
+                if (birthdate > today) {
+                    showError(errorElement, 'Birthdate cannot be in the future');
+                    resultElement.style.display = 'none';
+                    return;
+                }
+                
+                // If validation passes, hide error
+                errorElement.style.display = 'none';
+                
+                // Calculate age components
+                let years = today.getFullYear() - birthdate.getFullYear();
+                let months = today.getMonth() - birthdate.getMonth();
+                let days = today.getDate() - birthdate.getDate();
+                
+                // Adjust for negative months or days
+                if (months < 0 || (months === 0 && days < 0)) {
+                    years--;
+                    months += 12;
+                }
+                
+                if (days < 0) {
+                    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, birthdate.getDate());
+                    days = Math.floor((today - lastMonth) / (1000 * 60 * 60 * 24));
+                    months--;
+                }
+                
+                // Calculate total time
+                const diffTime = Math.abs(today - birthdate);
+                const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
+                const totalMinutes = Math.floor(diffTime / (1000 * 60));
+                const totalSeconds = Math.floor(diffTime / 1000);
+                
+                // Calculate next birthday
+                const nextBirthday = new Date(today.getFullYear(), birthdate.getMonth(), birthdate.getDate());
+                if (nextBirthday < today) {
+                    nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
+                }
+                const daysUntilNextBirthday = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+                
+                // Format next birthday message
+                let nextBdayMessage;
+                if (daysUntilNextBirthday === 0) {
+                    nextBdayMessage = "Your birthday is today! 🎉";
+                } else if (daysUntilNextBirthday === 1) {
+                    nextBdayMessage = "Next birthday is tomorrow!";
+                } else {
+                    nextBdayMessage = `Next birthday in ${daysUntilNextBirthday} days`;
+                }
+                
+                // Display results
+                document.getElementById('age-display').textContent = `${years} ${pluralize(years, 'year')}`;
+                document.getElementById('years').textContent = `${years} ${pluralize(years, 'year')} old`;
+                document.getElementById('months').textContent = `${months} ${pluralize(months, 'month')}`;
+                document.getElementById('days').textContent = `${days} ${pluralize(days, 'day')}`;
+                document.getElementById('hours').textContent = `${totalHours.toLocaleString()} ${pluralize(totalHours, 'hour')}`;
+                document.getElementById('next-birthday').textContent = nextBdayMessage;
+                
+                // Show result with animation
+                resultElement.style.display = 'block';
+                
+                // Show appropriate character based on age
+                showCharacter(years);
+                
+                // Add celebration effect if it's their birthday today
+                if (daysUntilNextBirthday === 0) {
+                    celebrate();
+                }
+            }
+            
+            // Function to show age-appropriate character
+            function showCharacter(age) {
+                // Hide all characters first
+                document.querySelectorAll('.character').forEach(char => {
+                    char.style.display = 'none';
+                });
+                
+                // Show appropriate character based on age
+                if (age < 5) {
+                    document.getElementById('baby-character').style.display = 'block';
+                } else if (age < 13) {
+                    document.getElementById('child-character').style.display = 'block';
+                } else if (age < 20) {
+                    document.getElementById('teen-character').style.display = 'block';
+                } else if (age < 60) {
+                    document.getElementById('adult-character').style.display = 'block';
+                } else {
+                    document.getElementById('elder-character').style.display = 'block';
+                }
+            }
+            
+            // Helper function to show errors
+            function showError(element, message) {
+                element.textContent = message;
+                element.style.display = 'block';
+                element.style.animation = 'shake 0.3s ease';
+                setTimeout(() => {
+                    element.style.animation = '';
+                }, 300);
+            }
+            
+            // Helper function to pluralize words
+            function pluralize(count, word) {
+                return count === 1 ? word : `${word}s`;
+            }
+            
+            // Celebration effect for birthdays
+            function celebrate() {
+                const container = document.querySelector('.container');
+                const colors = ['#ff4757', '#ffcc00', '#2ed573', '#1e90ff', '#ff6b81'];
+                
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.style.position = 'absolute';
+                        confetti.style.width = '10px';
+                        confetti.style.height = '10px';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.borderRadius = '50%';
+                        confetti.style.top = '-10px';
+                        confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.opacity = '0.8';
+                        confetti.style.zIndex = '1000';
+                        confetti.style.pointerEvents = 'none';
+                        container.appendChild(confetti);
+                        
+                        const animation = confetti.animate([
+                            { top: '-10px', opacity: 0.8, transform: 'scale(1)' },
+                            { top: '100%', opacity: 0, transform: 'scale(0.5)' }
+                        ], {
+                            duration: 2000 + Math.random() * 3000,
+                            easing: 'cubic-bezier(0.1, 0.8, 0.9, 1)'
+                        });
+                        
+                        animation.onfinish = () => {
+                            confetti.remove();
+                        };
+                    }, i * 100);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
